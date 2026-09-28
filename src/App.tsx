@@ -1,4 +1,5 @@
 import { AboutSection } from './sections/AboutSection'
+import { ContactSection } from './sections/ContactSection'
 import { HeroSection } from './sections/HeroSection'
 import { MarqueeSection } from './sections/MarqueeSection'
 import { ProjectsSection } from './sections/ProjectsSection'
@@ -12,6 +13,7 @@ export default function App() {
       <AboutSection />
       <ServicesSection />
       <ProjectsSection />
+      <ContactSection />
     </main>
   )
 }
