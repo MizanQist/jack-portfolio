@@ -28,18 +28,18 @@ export function HeroSection() {
       </FadeIn>
 
       <div className="overflow-hidden">
-        <FadeIn as="h1" delay={0.15} y={40} className="hero-heading mt-6 w-full whitespace-nowrap text-center text-[14vw] font-black uppercase leading-none tracking-tight sm:mt-4 sm:text-[15vw] md:-mt-5 md:text-[16vw] lg:text-[17.5vw]">
-          Hi, i&apos;m jack
+        <FadeIn as="h1" delay={0.15} y={40} className="hero-heading mt-6 w-full whitespace-nowrap text-center text-[12vw] font-black uppercase leading-none tracking-tight sm:mt-4 sm:text-[12.5vw] md:-mt-5">
+          Hi, i&apos;m Mamman
         </FadeIn>
       </div>
 
       <div className="relative z-20 mt-auto flex items-end justify-between px-6 pb-7 sm:pb-8 md:px-10 md:pb-10">
         <FadeIn delay={0.35} y={20}>
           <p
-            className="max-w-[160px] font-light uppercase leading-snug tracking-wide text-mist sm:max-w-[220px] md:max-w-[260px]"
+            className="max-w-[160px] font-light uppercase leading-snug tracking-wide text-mist sm:max-w-[240px] md:max-w-[300px] lg:max-w-[360px]"
             style={{ fontSize: 'clamp(0.75rem, 1.4vw, 1.5rem)' }}
           >
-            a 3d creator driven by crafting striking and unforgettable projects
+            A Software engineer with a background in Civil Engineering. I build software that solves real problems with an eye for product design and user experience
           </p>
         </FadeIn>
         <FadeIn delay={0.5} y={20}>
@@ -48,7 +48,7 @@ export function HeroSection() {
       </div>
 
       {/* positioning lives on a plain div: FadeIn writes an inline transform that would clobber Tailwind's translate */}
-      <div className="absolute left-1/2 top-1/2 z-10 w-[280px] -translate-x-1/2 -translate-y-1/2 sm:top-auto sm:bottom-0 sm:w-[360px] sm:translate-y-0 md:w-[440px] lg:w-[520px]">
+      <div className="absolute left-1/2 top-1/2 z-10 w-[280px] -translate-x-1/2 -translate-y-1/2 sm:top-auto sm:bottom-0 sm:w-[360px] sm:translate-y-0 md:w-[330px] lg:w-[390px]">
         <FadeIn delay={0.6} y={30}>
         <Magnet
           padding={150}
@@ -58,7 +58,7 @@ export function HeroSection() {
         >
           <img
             src={portrait}
-            alt="Stylised 3D portrait of Jack"
+            alt="Stylised 3D portrait of Mamman"
             width={1040}
             height={1554}
             // @ts-expect-error React 18 wants the lowercase DOM spelling

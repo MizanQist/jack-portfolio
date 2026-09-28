@@ -33,7 +33,7 @@ const DECOR = [
 ]
 
 const BIO =
-  "With more than five years of experience in design, i focus on branding, web design, and user experience, i truly enjoy working with businesses that aim to stand out and present their best image. Let's build something incredible together!"
+  'I design and build apps, websites, and brands from concept to launch. Graphic design, product strategy, and go-to-market included.'
 
 export function AboutSection() {
   return (

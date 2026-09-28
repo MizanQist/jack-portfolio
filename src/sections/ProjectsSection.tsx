@@ -4,46 +4,68 @@ import type { MotionValue } from 'framer-motion'
 import { LiveProjectButton } from '../components/Buttons'
 import { FadeIn } from '../components/FadeIn'
 
-const CDN = 'https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P'
-const img = (file: string) =>
-  `https://images.higgs.ai/?default=1&output=webp&url=${encodeURIComponent(`${CDN}/${file}.png`)}&w=1280&q=85`
+type Project = {
+  slug: string
+  name: string
+  category: string
+  href?: string
+  // portrait videos take the tall right column; wide ones span the whole media row
+  video?: 'portrait' | 'wide'
+}
 
-const PROJECTS = [
-  {
-    name: 'Nextlevel Studio',
-    category: 'Client',
-    images: [
-      img('hf_20260412_055344_5eff02e0-87a5-41ce-b64f-eb08da8f33db'),
-      img('hf_20260412_055431_11d841fd-8b41-46a5-82e4-b04f2407a7d8'),
-      img('hf_20260412_055451_e317bf2d-28d4-48cc-86b0-6f72f25b6327'),
-    ],
-  },
-  {
-    name: 'Aura Brand Identity',
-    category: 'Personal',
-    images: [
-      img('hf_20260412_055654_911201c5-36d9-4bc6-bac7-331adfce159f'),
-      img('hf_20260412_055723_5ceda0b8-d9c2-4665-b2e3-83ba19ba76d1'),
-      img('hf_20260412_055753_adc5dcbd-a8e6-49c0-b43a-9b030d835cea'),
-    ],
-  },
-  {
-    name: 'Solaris Digital',
-    category: 'Client',
-    images: [
-      img('hf_20260412_055759_963cfb0b-4bd1-4b0f-9d0a-09bd6cf95b2f'),
-      img('hf_20260412_060108_438f781a-9846-4dcc-89ab-c4e6cb830f5b'),
-      img('hf_20260412_055818_9d062121-ad7e-46b9-999a-1a6a692ef1ee'),
-    ],
-  },
+// assets live in public/projects as <slug>-1/-2/-3.webp, or <slug>.mp4 + <slug>-poster.webp for videos
+const PROJECTS: Project[] = [
+  { slug: 'villa-71', name: 'Villa 71', category: 'Brochure site', href: 'https://mizanqist.github.io/villa-71/' },
+  { slug: 'lantees', name: 'Lantees Cafe', category: 'Website', href: 'https://mizanqist.github.io/lantees-cafe/' },
+  { slug: 'cova-manor', name: 'Cova Manor', category: 'Brochure site', href: 'https://mizanqist.github.io/cova-manor/' },
+  { slug: 'glamor-attire', name: 'Glamor Attire', category: 'Website', href: 'https://mizanqist.github.io/glamor-attire/' },
+  { slug: 'heights-777', name: 'Heights 777', category: 'Brochure site', href: 'https://mizanqist.github.io/heights-777/' },
+  { slug: 'lantees-drinks', name: 'Lantees Drinks', category: 'Motion', video: 'portrait' },
+  { slug: 'teapot', name: 'Teapot', category: 'Motion', video: 'portrait' },
+  { slug: 'dopres', name: 'Dopres', category: 'Motion', video: 'wide' },
 ]
+
+const asset = (file: string) => `${import.meta.env.BASE_URL}projects/${file}`
 
 const SCALE_STEP = 0.03
 const STACK_OFFSET_PX = 28
 const RADIUS = 'rounded-[40px] sm:rounded-[50px] md:rounded-[60px]'
 
+function Clip({ slug, className }: { slug: string; className?: string }) {
+  return (
+    <video
+      src={asset(`${slug}.mp4`)}
+      poster={asset(`${slug}-poster.webp`)}
+      className={`${className ?? ''} object-cover ${RADIUS}`}
+      autoPlay
+      muted
+      loop
+      playsInline
+      preload="metadata"
+    />
+  )
+}
+
+function Media({ project }: { project: Project }) {
+  if (project.video === 'wide') return <Clip slug={project.slug} className="aspect-video w-full" />
+
+  return (
+    <div className="grid grid-cols-[40fr_60fr] gap-4 sm:gap-6 md:gap-8">
+      <div className="flex flex-col gap-4 sm:gap-6 md:gap-8">
+        <img src={asset(`${project.slug}-1.webp`)} alt="" loading="lazy" className={`w-full object-cover ${RADIUS}`} style={{ height: 'clamp(130px, 16vw, 230px)' }} />
+        <img src={asset(`${project.slug}-2.webp`)} alt="" loading="lazy" className={`w-full object-cover ${RADIUS}`} style={{ height: 'clamp(160px, 22vw, 340px)' }} />
+      </div>
+      {project.video === 'portrait' ? (
+        <Clip slug={project.slug} className="h-full w-full" />
+      ) : (
+        <img src={asset(`${project.slug}-3.webp`)} alt="" loading="lazy" className={`h-full w-full object-cover ${RADIUS}`} />
+      )}
+    </div>
+  )
+}
+
 type CardProps = {
-  project: (typeof PROJECTS)[number]
+  project: Project
   index: number
   total: number
   progress: MotionValue<number>
@@ -52,7 +74,6 @@ type CardProps = {
 function ProjectCard({ project, index, total, progress }: CardProps) {
   const targetScale = 1 - (total - 1 - index) * SCALE_STEP
   const scale = useTransform(progress, [index / total, 1], [1, targetScale])
-  const [left1, left2, right] = project.images
 
   return (
     <div className="h-[85vh]">
@@ -70,18 +91,14 @@ function ProjectCard({ project, index, total, progress }: CardProps) {
               {project.name}
             </h3>
           </div>
-          <div className="w-full sm:w-auto">
-            <LiveProjectButton />
-          </div>
+          {project.href && (
+            <div className="w-full sm:w-auto">
+              <LiveProjectButton href={project.href} />
+            </div>
+          )}
         </div>
 
-        <div className="grid grid-cols-[40fr_60fr] gap-4 sm:gap-6 md:gap-8">
-          <div className="flex flex-col gap-4 sm:gap-6 md:gap-8">
-            <img src={left1} alt="" loading="lazy" className={`w-full object-cover ${RADIUS}`} style={{ height: 'clamp(130px, 16vw, 230px)' }} />
-            <img src={left2} alt="" loading="lazy" className={`w-full object-cover ${RADIUS}`} style={{ height: 'clamp(160px, 22vw, 340px)' }} />
-          </div>
-          <img src={right} alt="" loading="lazy" className={`h-full w-full object-cover ${RADIUS}`} />
-        </div>
+        <Media project={project} />
       </motion.article>
     </div>
   )
@@ -106,7 +123,7 @@ export function ProjectsSection() {
 
       <div ref={ref} className="mx-auto max-w-6xl">
         {PROJECTS.map((project, i) => (
-          <ProjectCard key={project.name} project={project} index={i} total={PROJECTS.length} progress={scrollYProgress} />
+          <ProjectCard key={project.slug} project={project} index={i} total={PROJECTS.length} progress={scrollYProgress} />
         ))}
       </div>
     </section>

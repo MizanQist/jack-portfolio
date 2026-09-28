@@ -15,10 +15,12 @@ export function ContactButton() {
   )
 }
 
-export function LiveProjectButton({ href = '#' }: { href?: string }) {
+export function LiveProjectButton({ href }: { href: string }) {
   return (
     <a
       href={href}
+      target="_blank"
+      rel="noopener noreferrer"
       className="inline-flex items-center gap-2 rounded-full border-2 border-mist px-8 py-3 text-sm font-medium uppercase tracking-widest text-mist transition-colors duration-200 hover:bg-mist/10 sm:px-10 sm:py-3.5 sm:text-base"
     >
       Live Project

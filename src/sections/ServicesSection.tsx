@@ -2,19 +2,14 @@ import { FadeIn } from '../components/FadeIn'
 
 const SERVICES = [
   {
-    name: '3D Modeling',
+    name: 'Software & Web Development',
+    description:
+      'End-to-end software and web development — from architecture and clean, maintainable code to fast, responsive interfaces that ship and scale.',
+  },
+  {
+    name: '3D Modelling',
     description:
       'Creation of detailed objects, characters, or environments tailored to specific client needs, ideal for games, products, and visualizations.',
-  },
-  {
-    name: 'Rendering',
-    description:
-      'High-quality, photorealistic renders that showcase designs with custom lighting, textures, and materials to bring concepts to life.',
-  },
-  {
-    name: 'Motion Design',
-    description:
-      'Dynamic animations and motion graphics that add energy and storytelling to brands, products, and digital experiences.',
   },
   {
     name: 'Branding',
@@ -22,9 +17,14 @@ const SERVICES = [
       'Crafting cohesive visual identities — from logos to full brand systems — that communicate a clear and memorable presence.',
   },
   {
-    name: 'Web Design',
+    name: 'Motion Design',
     description:
-      'Designing clean, modern, and conversion-focused websites with attention to layout, typography, and user experience.',
+      'Dynamic animations and motion graphics that add energy and storytelling to brands, products, and digital experiences.',
+  },
+  {
+    name: 'Rendering',
+    description:
+      'High-quality, photorealistic renders that showcase designs with custom lighting, textures, and materials to bring concepts to life.',
   },
 ]
 
