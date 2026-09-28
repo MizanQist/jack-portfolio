@@ -1,6 +1,5 @@
 import { motion, useScroll, useTransform } from 'framer-motion'
-import { useRef } from 'react'
-import type { CSSProperties } from 'react'
+import { useEffect, useRef } from 'react'
 import type { MotionValue } from 'framer-motion'
 import { LiveProjectButton } from '../components/Buttons'
 import { FadeIn } from '../components/FadeIn'
@@ -31,37 +30,52 @@ const asset = (file: string) => `${import.meta.env.BASE_URL}projects/${file}`
 const SCALE_STEP = 0.03
 // eight cards stack, so keep the per-card peek small or the last card is pushed off-screen
 const STACK_OFFSET_PX = 12
-const STACK_TOP = '6rem'
-// media heights are capped by viewport height too, so a whole card fits under the sticky top on desktop
-const LEFT_TOP_H = 'clamp(130px, min(16vw, 17vh), 230px)'
-const LEFT_BOTTOM_H = 'clamp(160px, min(22vw, 25vh), 340px)'
-const WIDE_H = 'clamp(200px, min(56vw, 46vh), 620px)'
-const RADIUS = 'rounded-[40px] sm:rounded-[50px] md:rounded-[60px]'
+const STACK_TOP = '5rem'
+// the card keeps its phone layout at every size; its width follows viewport height so the whole card
+// always fits under the sticky top (~0.96 × width + 150px tall)
+const CARD_WIDTH = 'max(320px, 60vh)'
+const RADIUS = 'rounded-[40px]'
 
-function Clip({ slug, className, style }: { slug: string; className?: string; style?: CSSProperties }) {
+// videos only load and play once their card is near the viewport, and pause again when it leaves
+function Clip({ slug, className }: { slug: string; className?: string }) {
+  const ref = useRef<HTMLVideoElement>(null)
+
+  useEffect(() => {
+    const video = ref.current
+    if (!video) return
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) video.play().catch(() => {})
+        else video.pause()
+      },
+      { rootMargin: '200px' },
+    )
+    observer.observe(video)
+    return () => observer.disconnect()
+  }, [])
+
   return (
     <video
+      ref={ref}
       src={asset(`${slug}.mp4`)}
       poster={asset(`${slug}-poster.webp`)}
       className={`${className ?? ''} object-cover ${RADIUS}`}
-      style={style}
-      autoPlay
       muted
       loop
       playsInline
-      preload="metadata"
+      preload="none"
     />
   )
 }
 
 function Media({ project }: { project: Project }) {
-  if (project.video === 'wide') return <Clip slug={project.slug} className="w-full" style={{ height: WIDE_H }} />
+  if (project.video === 'wide') return <Clip slug={project.slug} className="aspect-video w-full" />
 
   return (
-    <div className="grid grid-cols-[40fr_60fr] gap-4 sm:gap-6 md:gap-8">
-      <div className="flex flex-col gap-4 sm:gap-6 md:gap-8">
-        <img src={asset(`${project.slug}-1.webp`)} alt="" loading="lazy" className={`w-full object-cover ${RADIUS}`} style={{ height: LEFT_TOP_H }} />
-        <img src={asset(`${project.slug}-2.webp`)} alt="" loading="lazy" className={`w-full object-cover ${RADIUS}`} style={{ height: LEFT_BOTTOM_H }} />
+    <div className="grid grid-cols-[40fr_60fr] gap-4">
+      <div className="flex flex-col gap-4">
+        <img src={asset(`${project.slug}-1.webp`)} alt="" loading="lazy" className={`aspect-[14/15] w-full object-cover ${RADIUS}`} />
+        <img src={asset(`${project.slug}-2.webp`)} alt="" loading="lazy" className={`aspect-[3/4] w-full object-cover ${RADIUS}`} />
       </div>
       {/* absolutely positioned so the media's intrinsic height can't stretch the row — the left column sets it */}
       <div className="relative">
@@ -91,21 +105,17 @@ function ProjectCard({ project, index, total, progress }: CardProps) {
   return (
     <div className="sticky top-0 h-screen" style={{ paddingTop: `calc(${STACK_TOP} + ${index * STACK_OFFSET_PX}px)` }}>
       <motion.article
-        style={{ scale, transformOrigin: 'top center' }}
-        className={`flex flex-col gap-6 border-2 border-mist bg-ink p-4 sm:gap-8 sm:p-6 md:gap-10 md:p-8 ${RADIUS}`}
+        style={{ scale, transformOrigin: 'top center', maxWidth: CARD_WIDTH }}
+        className={`mx-auto flex w-full flex-col gap-6 border-2 border-mist bg-ink p-4 ${RADIUS}`}
       >
-        <div className="flex flex-wrap items-center gap-x-6 gap-y-4 sm:gap-x-10">
-          <span className="text-[clamp(3rem,min(10vw,14vh),140px)] font-black leading-none text-mist">
-            {String(index + 1).padStart(2, '0')}
-          </span>
+        <div className="flex flex-wrap items-center gap-x-6 gap-y-4">
+          <span className="text-5xl font-black leading-none text-mist">{String(index + 1).padStart(2, '0')}</span>
           <div className="flex min-w-0 flex-1 flex-col gap-1">
-            <span className="text-xs font-light uppercase tracking-widest text-mist/60 sm:text-sm">{project.category}</span>
-            <h3 className="text-[clamp(1.25rem,2.6vw,2.5rem)] font-medium uppercase leading-tight text-mist">
-              {project.name}
-            </h3>
+            <span className="text-xs font-light uppercase tracking-widest text-mist/60">{project.category}</span>
+            <h3 className="text-xl font-medium uppercase leading-tight text-mist">{project.name}</h3>
           </div>
           {project.href && (
-            <div className="w-full sm:w-auto">
+            <div className="w-full">
               <LiveProjectButton href={project.href} />
             </div>
           )}
