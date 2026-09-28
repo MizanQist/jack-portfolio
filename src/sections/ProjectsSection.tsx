@@ -1,5 +1,6 @@
 import { motion, useScroll, useTransform } from 'framer-motion'
 import { useRef } from 'react'
+import type { CSSProperties } from 'react'
 import type { MotionValue } from 'framer-motion'
 import { LiveProjectButton } from '../components/Buttons'
 import { FadeIn } from '../components/FadeIn'
@@ -28,15 +29,22 @@ const PROJECTS: Project[] = [
 const asset = (file: string) => `${import.meta.env.BASE_URL}projects/${file}`
 
 const SCALE_STEP = 0.03
-const STACK_OFFSET_PX = 28
+// eight cards stack, so keep the per-card peek small or the last card is pushed off-screen
+const STACK_OFFSET_PX = 12
+const STACK_TOP = '6rem'
+// media heights are capped by viewport height too, so a whole card fits under the sticky top on desktop
+const LEFT_TOP_H = 'clamp(130px, min(16vw, 17vh), 230px)'
+const LEFT_BOTTOM_H = 'clamp(160px, min(22vw, 25vh), 340px)'
+const WIDE_H = 'clamp(200px, min(56vw, 46vh), 620px)'
 const RADIUS = 'rounded-[40px] sm:rounded-[50px] md:rounded-[60px]'
 
-function Clip({ slug, className }: { slug: string; className?: string }) {
+function Clip({ slug, className, style }: { slug: string; className?: string; style?: CSSProperties }) {
   return (
     <video
       src={asset(`${slug}.mp4`)}
       poster={asset(`${slug}-poster.webp`)}
       className={`${className ?? ''} object-cover ${RADIUS}`}
+      style={style}
       autoPlay
       muted
       loop
@@ -47,19 +55,22 @@ function Clip({ slug, className }: { slug: string; className?: string }) {
 }
 
 function Media({ project }: { project: Project }) {
-  if (project.video === 'wide') return <Clip slug={project.slug} className="aspect-video w-full" />
+  if (project.video === 'wide') return <Clip slug={project.slug} className="w-full" style={{ height: WIDE_H }} />
 
   return (
     <div className="grid grid-cols-[40fr_60fr] gap-4 sm:gap-6 md:gap-8">
       <div className="flex flex-col gap-4 sm:gap-6 md:gap-8">
-        <img src={asset(`${project.slug}-1.webp`)} alt="" loading="lazy" className={`w-full object-cover ${RADIUS}`} style={{ height: 'clamp(130px, 16vw, 230px)' }} />
-        <img src={asset(`${project.slug}-2.webp`)} alt="" loading="lazy" className={`w-full object-cover ${RADIUS}`} style={{ height: 'clamp(160px, 22vw, 340px)' }} />
+        <img src={asset(`${project.slug}-1.webp`)} alt="" loading="lazy" className={`w-full object-cover ${RADIUS}`} style={{ height: LEFT_TOP_H }} />
+        <img src={asset(`${project.slug}-2.webp`)} alt="" loading="lazy" className={`w-full object-cover ${RADIUS}`} style={{ height: LEFT_BOTTOM_H }} />
       </div>
-      {project.video === 'portrait' ? (
-        <Clip slug={project.slug} className="h-full w-full" />
-      ) : (
-        <img src={asset(`${project.slug}-3.webp`)} alt="" loading="lazy" className={`h-full w-full object-cover ${RADIUS}`} />
-      )}
+      {/* absolutely positioned so the media's intrinsic height can't stretch the row — the left column sets it */}
+      <div className="relative">
+        {project.video === 'portrait' ? (
+          <Clip slug={project.slug} className="absolute inset-0 h-full w-full" />
+        ) : (
+          <img src={asset(`${project.slug}-3.webp`)} alt="" loading="lazy" className={`absolute inset-0 h-full w-full object-cover ${RADIUS}`} />
+        )}
+      </div>
     </div>
   )
 }
@@ -75,14 +86,16 @@ function ProjectCard({ project, index, total, progress }: CardProps) {
   const targetScale = 1 - (total - 1 - index) * SCALE_STEP
   const scale = useTransform(progress, [index / total, 1], [1, targetScale])
 
+  // the full-height wrapper is the sticky element: pinned inside the shared parent it stays put while
+  // the next wrapper slides over it. Sticky on the card itself gets pushed away by its own wrapper's end.
   return (
-    <div className="h-[85vh]">
+    <div className="sticky top-0 h-screen" style={{ paddingTop: `calc(${STACK_TOP} + ${index * STACK_OFFSET_PX}px)` }}>
       <motion.article
-        style={{ scale, top: `calc(var(--stack-top) + ${index * STACK_OFFSET_PX}px)` }}
-        className={`sticky flex flex-col gap-6 border-2 border-mist bg-ink p-4 [--stack-top:6rem] sm:gap-8 sm:p-6 md:gap-10 md:p-8 md:[--stack-top:8rem] ${RADIUS}`}
+        style={{ scale, transformOrigin: 'top center' }}
+        className={`flex flex-col gap-6 border-2 border-mist bg-ink p-4 sm:gap-8 sm:p-6 md:gap-10 md:p-8 ${RADIUS}`}
       >
         <div className="flex flex-wrap items-center gap-x-6 gap-y-4 sm:gap-x-10">
-          <span className="text-[clamp(3rem,10vw,140px)] font-black leading-none text-mist">
+          <span className="text-[clamp(3rem,min(10vw,14vh),140px)] font-black leading-none text-mist">
             {String(index + 1).padStart(2, '0')}
           </span>
           <div className="flex min-w-0 flex-1 flex-col gap-1">
@@ -121,7 +134,8 @@ export function ProjectsSection() {
         Project
       </FadeIn>
 
-      <div ref={ref} className="mx-auto max-w-6xl">
+      {/* bottom padding lets the last card stay pinned for a while instead of leaving the moment it lands */}
+      <div ref={ref} className="mx-auto max-w-6xl pb-[50vh]">
         {PROJECTS.map((project, i) => (
           <ProjectCard key={project.slug} project={project} index={i} total={PROJECTS.length} progress={scrollYProgress} />
         ))}

@@ -28,8 +28,8 @@ export function HeroSection() {
       </FadeIn>
 
       <div className="overflow-hidden">
-        <FadeIn as="h1" delay={0.15} y={40} className="hero-heading mt-6 w-full whitespace-nowrap text-center text-[12vw] font-black uppercase leading-none tracking-tight sm:mt-4 sm:text-[12.5vw] md:-mt-5">
-          Hi, i&apos;m Mamman
+        <FadeIn as="h1" delay={0.15} y={40} className="hero-heading mt-6 w-full whitespace-nowrap text-center text-[17vw] font-black uppercase leading-none tracking-tight sm:mt-4 sm:text-[18vw] md:-mt-5">
+          Hi, i&apos;m Ali
         </FadeIn>
       </div>
 
@@ -47,8 +47,9 @@ export function HeroSection() {
         </FadeIn>
       </div>
 
-      {/* positioning lives on a plain div: FadeIn writes an inline transform that would clobber Tailwind's translate */}
-      <div className="absolute left-1/2 top-1/2 z-10 w-[280px] -translate-x-1/2 -translate-y-1/2 sm:top-auto sm:bottom-0 sm:w-[360px] sm:translate-y-0 md:w-[330px] lg:w-[390px]">
+      {/* positioning lives on a plain div: FadeIn writes an inline transform that would clobber Tailwind's translate.
+          Upright screens (phones, iPad portrait) keep the head centred between heading and footer; landscape pins it to the bottom */}
+      <div className="hero-portrait absolute left-1/2 z-10">
         <FadeIn delay={0.6} y={30}>
         <Magnet
           padding={150}
@@ -58,7 +59,7 @@ export function HeroSection() {
         >
           <img
             src={portrait}
-            alt="Stylised 3D portrait of Mamman"
+            alt="Stylised 3D portrait of Ali"
             width={1040}
             height={1554}
             // @ts-expect-error React 18 wants the lowercase DOM spelling

@@ -25,6 +25,32 @@ body,
   -webkit-text-fill-color: transparent;
 }
 
+/* Hero portrait: centred between heading and footer on upright screens (phones, iPad portrait);
+   pinned to the bottom and capped by viewport height on landscape so it never swallows the name. */
+.hero-portrait {
+  top: 50%;
+  width: 280px;
+  transform: translate(-50%, -50%);
+}
+@media (min-width: 640px) {
+  .hero-portrait {
+    width: 360px;
+  }
+}
+@media (min-width: 768px) and (orientation: portrait) {
+  .hero-portrait {
+    width: min(56vw, 46vh);
+  }
+}
+@media (min-width: 640px) and (orientation: landscape) {
+  .hero-portrait {
+    top: auto;
+    bottom: 0;
+    width: min(390px, 42vh);
+    transform: translateX(-50%);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
