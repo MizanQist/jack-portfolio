@@ -15,14 +15,14 @@ type Project = {
 
 // assets live in public/projects as <slug>-1/-2/-3.webp, or <slug>.mp4 + <slug>-poster.webp for videos
 const PROJECTS: Project[] = [
-  { slug: 'villa-71', name: 'Villa 71', category: 'Brochure site', href: 'https://mizanqist.github.io/villa-71/' },
-  { slug: 'lantees', name: 'Lantees Cafe', category: 'Website', href: 'https://mizanqist.github.io/lantees-cafe/' },
-  { slug: 'cova-manor', name: 'Cova Manor', category: 'Brochure site', href: 'https://mizanqist.github.io/cova-manor/' },
-  { slug: 'glamor-attire', name: 'Glamor Attire', category: 'Website', href: 'https://mizanqist.github.io/glamor-attire/' },
-  { slug: 'heights-777', name: 'Heights 777', category: 'Brochure site', href: 'https://mizanqist.github.io/heights-777/' },
-  { slug: 'lantees-drinks', name: 'Lantees Drinks', category: 'Motion', video: 'portrait' },
-  { slug: 'teapot', name: 'Teapot', category: 'Motion', video: 'portrait' },
   { slug: 'dopres', name: 'Dopres', category: 'Motion', video: 'wide' },
+  { slug: 'lantees-drinks', name: 'Lantees Drinks', category: 'Motion', video: 'portrait' },
+  { slug: 'lantees', name: 'Lantees Cafe', category: 'Website', href: 'https://mizanqist.github.io/lantees-cafe/' },
+  { slug: 'glamor-attire', name: 'Glamor Attire', category: 'Website', href: 'https://mizanqist.github.io/glamor-attire/' },
+  { slug: 'teapot', name: 'Teapot', category: 'Motion', video: 'portrait' },
+  { slug: 'cova-manor', name: 'Cova Manor', category: 'Brochure site', href: 'https://mizanqist.github.io/cova-manor/' },
+  { slug: 'villa-71', name: 'Villa 71', category: 'Brochure site', href: 'https://mizanqist.github.io/villa-71/' },
+  { slug: 'heights-777', name: 'Heights 777', category: 'Brochure site', href: 'https://mizanqist.github.io/heights-777/' },
 ]
 
 const asset = (file: string) => `${import.meta.env.BASE_URL}projects/${file}`
